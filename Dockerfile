@@ -34,8 +34,7 @@ RUN npm run build
 
 FROM node:20-alpine AS final
 
-RUN apk update && \
-    apk add tzdata ffmpeg bash openssl
+RUN RUN apk --no-cache add tzdata ffmpeg bash openssl
 
 ENV TZ=America/Sao_Paulo
 
