@@ -20,7 +20,7 @@ RUN npm install -g npm@latest && \
     npm install --legacy-peer-deps && \
     npm cache clean --force
 
-RUN npm install
+RUN npm install --legacy-peer-deps
 RUN npx prisma generate
 
 COPY ./src ./src
