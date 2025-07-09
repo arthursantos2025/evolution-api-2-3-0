@@ -118,3 +118,5 @@ Please contact contato@evolution-api.com to inquire about licensing matters.
 Apart from the specific conditions mentioned above, all other rights and restrictions follow the Apache License 2.0. Detailed information about the Apache License 2.0 can be found at [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
 © 2024 Evolution API
+
+# Línea de prueba para verificar cambios en git

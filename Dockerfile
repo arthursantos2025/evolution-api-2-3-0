@@ -13,15 +13,18 @@ WORKDIR /evolution
 # Eliminar el bloque RUN que genera el .env
 
 COPY package*.json tsconfig.json ./
+COPY ./prisma ./prisma
 
 # Usa versión local actualizada de npm si realmente es necesario
 RUN npm install -g npm@latest && \
     npm install --legacy-peer-deps && \
     npm cache clean --force
 
+RUN npm install
+RUN npx prisma generate
+
 COPY ./src ./src
 COPY ./public ./public
-COPY ./prisma ./prisma
 COPY ./manager ./manager
 COPY .env.example .env
 COPY runWithProvider.js .
@@ -60,5 +63,5 @@ ENV DOCKER_ENV=true
 
 EXPOSE 8080
 
-# Ejecutar migraciones en contenedor final
-ENTRYPOINT ["/bin/sh", "-c", "echo 'DATABASE_URL='$DATABASE_URL; if [ ! -f .env ] && [ ! -z \"$DATABASE_URL\" ]; then echo \"DATABASE_URL=\\\"$DATABASE_URL\\\"\" > .env; fi; echo 'Contenido de .env:'; cat .env; npx prisma migrate deploy && npm run start:prod"]
+# Ejecutar migraciones y generar Prisma en contenedor final
+ENTRYPOINT ["/bin/sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm run start:prod"]
