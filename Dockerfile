@@ -1,7 +1,7 @@
 FROM node:20-alpine AS builder
 
 # Instalar solo lo necesario
-RUN apk --no-cache add git ffmpeg bash openssl dos2unix
+RUN apk --no-cache add git ffmpeg bash openssl curl wget
 
 LABEL version="2.3.0" description="API to control WhatsApp features via HTTP" \
       maintainer="Davidson Gomes" git="https://github.com/DavidsonGomes" \
