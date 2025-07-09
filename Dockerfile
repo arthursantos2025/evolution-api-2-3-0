@@ -61,4 +61,4 @@ ENV DOCKER_ENV=true
 EXPOSE 8080
 
 # Ejecutar migraciones en contenedor final
-ENTRYPOINT ["/bin/sh", "-c", "echo 'DATABASE_URL='$DATABASE_URL; if [ ! -f .env ] && [ ! -z \"$DATABASE_URL\" ]; then echo \"DATABASE_URL=\\\"$DATABASE_URL\\\"\" > .env; fi; echo 'Contenido de .env:'; cat .env; . ./Docker/scripts/deploy_database.sh && npm run start:prod"]
+ENTRYPOINT ["/bin/sh", "-c", "echo 'DATABASE_URL='$DATABASE_URL; if [ ! -f .env ] && [ ! -z \"$DATABASE_URL\" ]; then echo \"DATABASE_URL=\\\"$DATABASE_URL\\\"\" > .env; fi; echo 'Contenido de .env:'; cat .env; npx prisma migrate deploy && npm run start:prod"]
