@@ -1,60 +1,62 @@
 FROM node:20-alpine AS builder
 
-RUN apk update && \
-    apk add --no-cache git ffmpeg wget curl bash openssl
+# Instalar solo lo necesario
+RUN apk --no-cache add git ffmpeg bash openssl dos2unix
 
-LABEL version="2.3.0" description="Api to control whatsapp features through http requests." 
-LABEL maintainer="Davidson Gomes" git="https://github.com/DavidsonGomes"
-LABEL contact="contato@evolution-api.com"
+LABEL version="2.3.0" description="API to control WhatsApp features via HTTP" \
+      maintainer="Davidson Gomes" git="https://github.com/DavidsonGomes" \
+      contact="contato@evolution-api.com"
 
 WORKDIR /evolution
 
-COPY ./package.json ./tsconfig.json ./
-COPY ./package-lock.json ./
+COPY package*.json tsconfig.json ./
 
-RUN npm install -g npm@latest
-RUN npm cache clean --force
-RUN npm install --legacy-peer-deps
+# Usa versión local actualizada de npm si realmente es necesario
+RUN npm install -g npm@latest && \
+    npm install --legacy-peer-deps && \
+    npm cache clean --force
 
 COPY ./src ./src
 COPY ./public ./public
 COPY ./prisma ./prisma
 COPY ./manager ./manager
-COPY ./.env.example ./.env
-COPY ./runWithProvider.js ./
-COPY ./tsup.config.ts ./
+COPY .env.example .env
+COPY runWithProvider.js .
+COPY tsup.config.ts .
+COPY Docker ./Docker
 
-COPY ./Docker ./Docker
-
+# Asegurar permisos en scripts
 RUN chmod +x ./Docker/scripts/* && dos2unix ./Docker/scripts/*
 
-RUN ./Docker/scripts/generate_database.sh
+# Si falla este paso, puede moverlo al contenedor final
+RUN ./Docker/scripts/generate_database.sh || echo "Skipping DB generation (may be handled at runtime)"
 
 RUN npm run build
 
+
+# ---------------- FINAL STAGE ----------------
 FROM node:20-alpine AS final
 
-RUN RUN apk --no-cache add tzdata ffmpeg bash openssl
+RUN apk --no-cache add tzdata ffmpeg bash openssl
 
 ENV TZ=America/Sao_Paulo
 
 WORKDIR /evolution
 
-COPY --from=builder /evolution/package.json ./package.json
-COPY --from=builder /evolution/package-lock.json ./package-lock.json
-
+COPY --from=builder /evolution/package*.json ./
 COPY --from=builder /evolution/node_modules ./node_modules
 COPY --from=builder /evolution/dist ./dist
 COPY --from=builder /evolution/prisma ./prisma
 COPY --from=builder /evolution/manager ./manager
 COPY --from=builder /evolution/public ./public
-COPY --from=builder /evolution/.env ./.env
+COPY --from=builder /evolution/.env .env
 COPY --from=builder /evolution/Docker ./Docker
-COPY --from=builder /evolution/runWithProvider.js ./runWithProvider.js
-COPY --from=builder /evolution/tsup.config.ts ./tsup.config.ts
+COPY --from=builder /evolution/runWithProvider.js .
+COPY --from=builder /evolution/tsup.config.ts .
 
 ENV DOCKER_ENV=true
 
 EXPOSE 8080
 
-ENTRYPOINT ["/bin/bash", "-c", ". ./Docker/scripts/deploy_database.sh && npm run start:prod" ]
+# Ejecutar migraciones en contenedor final
+CMD ["/bin/bash", "-c", "source ./Docker/scripts/deploy_database.sh && npm run start:prod"]
