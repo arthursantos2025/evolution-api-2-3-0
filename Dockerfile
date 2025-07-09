@@ -61,4 +61,4 @@ ENV DOCKER_ENV=true
 EXPOSE 8080
 
 # Ejecutar migraciones en contenedor final
-ENTRYPOINT ["/bin/sh", "-c", "if [ ! -f .env ] && [ ! -z \"$DATABASE_CONNECTION_URI\" ]; then echo \"DATABASE_CONNECTION_URI=\\\"$DATABASE_CONNECTION_URI\\\"\" > .env; fi && . ./Docker/scripts/deploy_database.sh && npm run start:prod"]
+ENTRYPOINT ["/bin/sh", "-c", "if [ ! -f .env ] && [ ! -z \"$DATABASE_URL\" ]; then echo \"DATABASE_URL=\\\"$DATABASE_URL\\\"\" > .env; fi && . ./Docker/scripts/deploy_database.sh && npm run start:prod"]
