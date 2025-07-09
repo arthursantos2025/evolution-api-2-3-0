@@ -48,3 +48,6 @@ lerna-debug.log*
 .tool-versions
 
 /prisma/migrations/*
+
+# Si la variable existe en el entorno, crea el archivo .env
+RUN if [ ! -f .env ] && [ ! -z "$DATABASE_CONNECTION_URI" ]; then echo "DATABASE_CONNECTION_URI=\"$DATABASE_CONNECTION_URI\"" > .env; fi

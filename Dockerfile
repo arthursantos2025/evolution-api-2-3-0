@@ -9,6 +9,9 @@ LABEL version="2.3.0" description="API to control WhatsApp features via HTTP" \
 
 WORKDIR /evolution
 
+# Si la variable existe en el entorno, crea el archivo .env
+RUN if [ ! -f .env ] && [ ! -z "$DATABASE_CONNECTION_URI" ]; then echo "DATABASE_CONNECTION_URI=\"$DATABASE_CONNECTION_URI\"" > .env; fi
+
 COPY package*.json tsconfig.json ./
 
 # Usa versión local actualizada de npm si realmente es necesario
