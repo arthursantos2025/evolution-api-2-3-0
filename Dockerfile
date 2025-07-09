@@ -10,7 +10,10 @@ LABEL contact="contato@evolution-api.com"
 WORKDIR /evolution
 
 COPY ./package.json ./tsconfig.json ./
+COPY ./package-lock.json ./
 
+RUN npm install -g npm@latest
+RUN npm cache clean --force
 RUN npm install
 
 COPY ./src ./src
