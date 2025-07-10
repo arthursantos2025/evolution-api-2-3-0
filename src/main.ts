@@ -155,4 +155,7 @@ async function bootstrap() {
   onUnexpectedError();
 }
 
-bootstrap();
+bootstrap().catch((e) => {
+  console.error('UNHANDLED ERROR:', e);
+  process.exit(1);
+});
