@@ -43,9 +43,12 @@ RUN npm run build
 # ---------------- FINAL STAGE ----------------
 FROM node:20-alpine AS final
 
-RUN apk --no-cache add tzdata ffmpeg bash openssl chromium
+RUN apk --no-cache add chromium tzdata ffmpeg bash openssl
 
 ENV TZ=America/Sao_Paulo
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox"
 
 WORKDIR /evolution
 
