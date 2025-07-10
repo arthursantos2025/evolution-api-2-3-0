@@ -1,7 +1,7 @@
 FROM node:20-alpine AS builder
 
 # Instalar solo lo necesario
-RUN apk --no-cache add git ffmpeg bash openssl curl wget
+RUN apk --no-cache add git ffmpeg bash openssl curl wget chromium
 
 LABEL version="2.3.0" description="API to control WhatsApp features via HTTP" \
       maintainer="Davidson Gomes" git="https://github.com/DavidsonGomes" \
@@ -43,7 +43,7 @@ RUN npm run build
 # ---------------- FINAL STAGE ----------------
 FROM node:20-alpine AS final
 
-RUN apk --no-cache add tzdata ffmpeg bash openssl
+RUN apk --no-cache add tzdata ffmpeg bash openssl chromium
 
 ENV TZ=America/Sao_Paulo
 
