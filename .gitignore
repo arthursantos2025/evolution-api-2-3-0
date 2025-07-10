@@ -47,6 +47,6 @@ lerna-debug.log*
 *.DS_Store
 .tool-versions
 
-/prisma/migrations/*
+#/prisma/migrations/*
 
 ENTRYPOINT ["/bin/sh", "-c", "if [ ! -f .env ] && [ ! -z \"$DATABASE_CONNECTION_URI\" ]; then echo \"DATABASE_CONNECTION_URI=\\\"$DATABASE_CONNECTION_URI\\\"\" > .env; fi && . ./Docker/scripts/deploy_database.sh && npm run start:prod"]
