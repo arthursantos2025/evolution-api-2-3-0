@@ -63,5 +63,5 @@ ENV DOCKER_ENV=true
 
 EXPOSE 8080
 
-# Ejecutar migraciones y generar Prisma en contenedor final
+# Ejecutar migraciones de Prisma antes de iniciar la app en cada arranque del contenedor
 ENTRYPOINT ["/bin/sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm run start:prod"]
